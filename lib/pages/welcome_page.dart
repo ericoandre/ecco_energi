@@ -1,9 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../widgets/custom_button.dart';
-import 'home_page.dart';
+import 'login_page.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -44,7 +42,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 // custom button
                 SizedBox(
                   width: double.infinity,
@@ -54,7 +52,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const HomePage()
+                              builder: (context) => const LoginPage()
                               // const GoogleSignIn()
                               ));
                       // if (ap.isSignedIn == true) {
@@ -79,7 +77,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     backColor: Colors.blue,
                     textColor: Colors.white,
                   ),
-                )
+                ),
               ],
             ),
           ),
