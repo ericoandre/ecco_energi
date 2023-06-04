@@ -50,20 +50,28 @@ class _UserCreatPageState extends State<UserCreatPage> {
                     obscureText: true,
                   ),
                   const SizedBox(height: 10.0),
-                  SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: CustomButton(
-                        onPressed: () async {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const LoginPage()));
-                        },
-                        text: "Criar Cadastro",
-                        backColor: Colors.blue,
-                        textColor: Colors.white,
-                      ))
+                  Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 25, horizontal: 35),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                                width: double.infinity,
+                                height: 50,
+                                child: CustomButton(
+                                  onPressed: () async {
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const LoginPage()));
+                                  },
+                                  text: "Criar Cadastro",
+                                  backColor: Colors.blue,
+                                  textColor: Colors.white,
+                                ))
+                          ]))
                 ])));
   }
 }
