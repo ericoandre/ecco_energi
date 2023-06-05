@@ -1,14 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import '../widgets/custom_textfield.dart';
+import '../widgets/custom_button.dart';
 
 import 'home_page.dart';
 import 'usercreat_page.dart';
-import 'welcome_page.dart';
-
-import '../widgets/custom_button.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -16,6 +15,42 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  // wrong email message popup
+  void wrongEmailMessage() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const AlertDialog(
+          backgroundColor: Colors.blue,
+          title: Center(
+            child: Text(
+              'Dados Não Confere',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // wrong password message popup
+  void wrongPasswordMessage() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const AlertDialog(
+          backgroundColor: Colors.blue,
+          title: Center(
+            child: Text(
+              'Dados Não Confere',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,20 +65,23 @@ class _LoginPageState extends State<LoginPage> {
               height: 256,
               child: Image.asset("images/banner-1-energia-solar.png"),
             ),
-            TextFormField(
+
+            // email textfield
+            CustomTextField(
               controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-              ),
+              hintText: 'Email',
+              obscureText: false,
             ),
-            const SizedBox(height: 10.0),
-            TextFormField(
+
+            const SizedBox(height: 10),
+
+            // password textfield
+            CustomTextField(
               controller: _passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-              ),
+              hintText: 'Password',
               obscureText: true,
             ),
+
             const SizedBox(height: 10.0),
             Padding(
                 padding:
@@ -56,23 +94,63 @@ class _LoginPageState extends State<LoginPage> {
                           height: 50,
                           child: CustomButton(
                             onPressed: () async {
-                              final String email = _emailController.text;
-                              final String password = _passwordController.text;
-                              Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => const HomePage()));
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  });
+                              try {
+                                await FirebaseAuth.instance
+                                    .signInWithEmailAndPassword(
+                                  email: _emailController.text,
+                                  password: _passwordController.text,
+                                );
+                                Navigator.pop(context);
+                              } on FirebaseAuthException catch (e) {
+                                Navigator.pop(context);
+                                if (e.code == 'user-not-found') {
+                                  wrongEmailMessage();
+                                } else if (e.code == 'wrong-password') {
+                                  wrongPasswordMessage();
+                                }
+                              }
                             },
                             text: "Login",
                             backColor: Colors.blue,
                             textColor: Colors.white,
                           )),
                       const SizedBox(height: 10.0),
-                      const Text(
-                        "Ou",
-                        style: TextStyle(fontSize: 14),
+
+                      // ou
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Divider(
+                                thickness: 0.5,
+                                color: Colors.grey[400],
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10.0),
+                              child: Text(
+                                'Ou',
+                                style: TextStyle(color: Colors.grey[700]),
+                              ),
+                            ),
+                            Expanded(
+                              child: Divider(
+                                thickness: 0.5,
+                                color: Colors.grey[400],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 10.0),
+
                       SizedBox(
                         width: double.infinity,
                         height: 50,
@@ -86,7 +164,7 @@ class _LoginPageState extends State<LoginPage> {
                           text: "Entre com sua conta google",
                           pngIconPath: 'images/google_icon.png',
                           backColor: Colors.white,
-                          textColor: Colors.red,
+                          textColor: Colors.green,
                         ),
                       ),
                       const SizedBox(height: 20.0),

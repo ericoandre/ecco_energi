@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/custom_button.dart';
-import 'login_page.dart';
+import 'auth_page.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -52,7 +52,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const LoginPage()
+                              builder: (context) => const AuthPage()
                               // const GoogleSignIn()
                               ));
                       // if (ap.isSignedIn == true) {

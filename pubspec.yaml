@@ -39,7 +39,7 @@ dependencies:
   firebase_core: ^2.13.1
   flutterfire: ^0.0.1
   firebase_storage: ^11.2.1
-  firebase_auth: ^4.6.1
+  firebase_auth: ^4.6.2
   cloud_firestore: ^4.7.1
   google_sign_in: ^6.1.3
 

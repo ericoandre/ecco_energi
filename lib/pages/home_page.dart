@@ -15,6 +15,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+          centerTitle: true,
           title: const Text('Meu App'),
           automaticallyImplyLeading: false,
           actions: <Widget>[
@@ -28,8 +29,7 @@ class _HomePageState extends State<HomePage> {
                   auth.signOut().then((res) {
                     Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginPage()),
+                        MaterialPageRoute(builder: (context) => LoginPage()),
                         (Route<dynamic> route) => false);
                   });
                 })

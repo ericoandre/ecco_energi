@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/custom_button.dart';
+import '../widgets/custom_textfield.dart';
+import 'auth_page.dart';
 import 'login_page.dart';
 
 class UserCreatPage extends StatefulWidget {
@@ -27,28 +29,32 @@ class _UserCreatPageState extends State<UserCreatPage> {
                     height: 256,
                     child: Image.asset("images/solar.png"),
                   ),
-                  TextFormField(
+
+                  // email textfield
+                  CustomTextField(
                     controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                    ),
+                    hintText: 'Email',
+                    obscureText: false,
                   ),
-                  const SizedBox(height: 20.0),
-                  TextFormField(
+
+                  const SizedBox(height: 10),
+
+                  // password textfield
+                  CustomTextField(
                     controller: _passwordController,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                    ),
+                    hintText: 'Password',
                     obscureText: true,
                   ),
-                  const SizedBox(height: 20.0),
-                  TextFormField(
+
+                  const SizedBox(height: 10),
+
+                  // password textfield
+                  CustomTextField(
                     controller: _passwordControllerdois,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                    ),
+                    hintText: 'Password',
                     obscureText: true,
                   ),
+
                   const SizedBox(height: 10.0),
                   Padding(
                       padding: const EdgeInsets.symmetric(
@@ -64,13 +70,26 @@ class _UserCreatPageState extends State<UserCreatPage> {
                                     Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                const LoginPage()));
+                                            builder: (context) => LoginPage()));
                                   },
                                   text: "Criar Cadastro",
                                   backColor: Colors.blue,
                                   textColor: Colors.white,
-                                ))
+                                )),
+                            const SizedBox(height: 20.0),
+                            GestureDetector(
+                                child: const Text("Login",
+                                    style: TextStyle(
+                                        decoration: TextDecoration.underline,
+                                        color: Colors.blue,
+                                        fontSize: 15)),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const AuthPage()));
+                                })
                           ]))
                 ])));
   }

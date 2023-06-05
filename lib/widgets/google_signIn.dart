@@ -18,7 +18,7 @@ class _GoogleSignInState extends State<GoogleSignIn> {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const LoginPage(),
+      home: LoginPage(),
     );
   }
 }
