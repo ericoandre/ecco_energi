@@ -21,10 +21,7 @@ class _WelcomePageState extends State<WelcomePage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  "images/eco.png",
-                  height: 300,
-                ),
+                Image.asset("assets/images/eco.png", height: 300),
                 const SizedBox(height: 20),
                 const Text(
                   "Vamos começar",

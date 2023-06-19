@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../widgets/custom_textfield.dart';
 import '../widgets/custom_button.dart';
 
-import 'home_page.dart';
+import 'home_screen/home_page.dart';
 import 'usercreat_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -15,6 +16,12 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  GoogleAuthProvider authProvider = GoogleAuthProvider();
+
+  String? name;
+  String? mageUrl;
+  User? user;
 
   // wrong email message popup
   void wrongEmailMessage() {
@@ -52,6 +59,42 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+
+  Future<User?> signInWithGoogle() async {
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    User? user;
+
+    // Obtain the auth details from the request
+    if (googleUser != null) {
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      try {
+        final UserCredential userCredential =
+            await firebaseAuth.signInWithCredential(credential);
+        user = userCredential.user;
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'account-exists-with-different-credential') {
+          wrongEmailMessage();
+        } else if (e.code == 'invalid-credential') {
+          wrongEmailMessage();
+        }
+      } catch (e) {
+        wrongEmailMessage();
+      }
+    }
+    // Once signed in, return the UserCredential
+    return user;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(
               width: 256,
               height: 256,
-              child: Image.asset("images/banner-1-energia-solar.png"),
+              child: Image.asset("assets/images/banner-1-energia-solar.png"),
             ),
 
             // email textfield
@@ -100,18 +143,29 @@ class _LoginPageState extends State<LoginPage> {
                                     return const Center(
                                         child: CircularProgressIndicator());
                                   });
+
                               try {
                                 await FirebaseAuth.instance
                                     .signInWithEmailAndPassword(
                                   email: _emailController.text,
                                   password: _passwordController.text,
                                 );
+                                print("email: " + _emailController.text);
+                                print("password: " + _passwordController.text);
                                 Navigator.pop(context);
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const HomePage()),
+                                );
                               } on FirebaseAuthException catch (e) {
                                 Navigator.pop(context);
                                 if (e.code == 'user-not-found') {
                                   wrongEmailMessage();
                                 } else if (e.code == 'wrong-password') {
+                                  wrongPasswordMessage();
+                                } else {
                                   wrongPasswordMessage();
                                 }
                               }
@@ -151,18 +205,24 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
 
+                      // google loguin
                       SizedBox(
                         width: double.infinity,
                         height: 50,
                         child: CustomButton(
                           onPressed: () async {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const HomePage()));
+                            User? user = await signInWithGoogle();
+
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => HomePage(
+                                  user: user,
+                                ),
+                              ),
+                            );
                           },
                           text: "Entre com sua conta google",
-                          pngIconPath: 'images/google_icon.png',
+                          pngIconPath: 'assets/images/google_icon.png',
                           backColor: Colors.white,
                           textColor: Colors.green,
                         ),
