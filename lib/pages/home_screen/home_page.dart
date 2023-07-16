@@ -2,10 +2,11 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
-import 'package:wave_progress_widget/wave_progress.dart';
 import 'package:flutter/material.dart';
 
+import '../../widgets/custom_card.dart';
 import '../login_page.dart';
+import '../../model/chart.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, User? user});
@@ -18,8 +19,9 @@ class _HomePageState extends State<HomePage> {
   String profileImage = "assets/images/user_avatar.png";
 
   List<charts.Series<ChartData, String>> _seriesList = [];
-  double _averagePercentage = 0;
-  double _totalProduction = 0;
+  double _averageProduction = 0;
+  double _averageGhi = 0;
+  double _averageTemp = 0;
 
   @override
   void initState() {
@@ -30,20 +32,20 @@ class _HomePageState extends State<HomePage> {
 
   void _loadDataFromJson() {
     String jsonData = '''
-    [
-      {"year": "2008", "month": "jan", "value": 200},
-      {"year": "2008","month": "fev", "value": 350},
-      {"year": "2008","month": "mar", "value": 420},
-      {"year": "2008","month": "abr", "value": 380},
-      {"year": "2008","month": "maio", "value": 410},
-      {"year": "2008","month": "jun", "value": 500},
-      {"year": "2008","month": "jul", "value": 550},
-      {"year": "2008","month": "ago", "value": 620},
-      {"year": "2008","month": "set", "value": 570},
-      {"year": "2008","month": "out", "value": 450},
-      {"year": "2008","month": "nov", "value": 400},
-      {"year": "2008","month": "dez", "value": 300}
-    ]
+      [
+        {"year":2008,"month":"Jan","ghi":460.3776273734,"temp":33.0949356579,"producao":298324.7025379357},
+        {"year":2008,"month":"Fev","ghi":463.0958054894,"temp":13.203870242,"producao":300086.0819571361},
+        {"year":2008,"month":"Mar","ghi":143.9752146621,"temp":10.0490439951,"producao":93295.9391010727},
+        {"year":2008,"month":"Abr","ghi":318.4623247525,"temp":31.0889873677,"producao":206363.5864396447},
+        {"year":2008,"month":"Mai","ghi":85.1168195917,"temp":31.2376265548,"producao":55155.6990954153},
+        {"year":2008,"month":"Jun","ghi":378.0917762673,"temp":22.3601092935,"producao":245003.4710212272},
+        {"year":2008,"month":"Jul","ghi":591.4969484578,"temp":23.7866624639,"producao":383290.0226006406},
+        {"year":2008,"month":"Ago","ghi":410.6787615904,"temp":17.4830463549,"producao":266119.8375105694},
+        {"year":2008,"month":"Set","ghi":46.2826615719,"temp":10.9352265001,"producao":29991.1646986046},
+        {"year":2008,"month":"Out","ghi":818.4281600597,"temp":27.7985985129,"producao":530341.4477187069},
+        {"year":2008,"month":"Nov","ghi":363.0960554707,"temp":20.1493771791,"producao":235286.243945006},
+        {"year":2008,"month":"Dez","ghi":143.1778117001,"temp":29.7332908772,"producao":92779.2219816678}
+      ]
     ''';
 
     List<dynamic> data = jsonDecode(jsonData);
@@ -51,23 +53,33 @@ class _HomePageState extends State<HomePage> {
         List<ChartData>.from(data.map((item) => ChartData.fromJson(item)));
 
     double totalProduction = 0;
+    double totalTemp = 0;
+    double totalGhi = 0;
+
     chartData.forEach((data) {
-      totalProduction += data.value;
+      totalProduction += data.producao;
+      totalTemp += data.temp;
+      totalGhi += data.ghi;
     });
-    double averagePercentage = (totalProduction / chartData.length) / 100;
+
+    double averageProduction = (totalProduction / chartData.length) / 1000;
+    double averageGhi = (totalGhi / chartData.length);
+    double averageTemp = (totalTemp / chartData.length);
+
     setState(() {
       _seriesList.add(
         charts.Series<ChartData, String>(
           id: 'Chart',
           domainFn: (ChartData data, _) => data.month,
-          measureFn: (ChartData data, _) => data.value,
+          measureFn: (ChartData data, _) => data.producao,
           data: chartData,
           labelAccessorFn: (ChartData data, _) =>
-              '${data.month}: ${data.value}',
+              '${data.month}: ${data.producao}',
         ),
       );
-      _totalProduction = totalProduction;
-      _averagePercentage = averagePercentage;
+      _averageProduction = averageProduction;
+      _averageGhi = averageGhi;
+      _averageTemp = averageTemp;
     });
   }
 
@@ -81,6 +93,7 @@ class _HomePageState extends State<HomePage> {
               title: const Text('Solar Ecco'),
               automaticallyImplyLeading: false,
               leadingWidth: 100,
+              toolbarHeight: 100,
               leading: Padding(
                 padding: EdgeInsets.fromLTRB(1, 1, 10, 1),
                 child: Column(
@@ -149,9 +162,9 @@ class _HomePageState extends State<HomePage> {
                                     Padding(
                                         padding: const EdgeInsetsDirectional
                                             .fromSTEB(16, 12, 16, 0),
-                                        child: Container(
+                                        child: SizedBox(
                                           width: double.infinity,
-                                          height: 350,
+                                          height: 320,
                                           child: charts.BarChart(
                                             _seriesList,
                                             animate: true,
@@ -159,139 +172,37 @@ class _HomePageState extends State<HomePage> {
                                                 milliseconds: 500),
                                           ),
                                         )),
-                                    Padding(
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(16, 12, 16, 0),
-                                        child: Container(
-                                            width: double.infinity,
-                                            height: 150,
-                                            decoration: BoxDecoration(
-                                              color: const Color.fromARGB(
-                                                  255, 80, 170, 255),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                    blurRadius: 5,
-                                                    color: Color(0x23000000),
-                                                    offset: Offset(0, 2))
-                                              ],
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                            alignment:
-                                                const AlignmentDirectional(
-                                                    0, 1),
-                                            child: Padding(
-                                                padding:
-                                                    const EdgeInsetsDirectional
-                                                            .fromSTEB(
-                                                        16, 16, 16, 16),
-                                                child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.max,
-                                                    children: <Widget>[
-                                                      Expanded(
-                                                          child: Column(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .max,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                            Text('Média mensal',
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontFamily:
-                                                                      'Roboto',
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize: 24,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                )),
-                                                            const Padding(
-                                                                padding:
-                                                                    const EdgeInsetsDirectional
-                                                                            .fromSTEB(
-                                                                        0,
-                                                                        4,
-                                                                        0,
-                                                                        0),
-                                                                child:
-                                                                    const Text(
-                                                                  'Produção energetica',
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    fontFamily:
-                                                                        'Roboto',
-                                                                    color: Color(
-                                                                        0x9AFFFFFF),
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                  ),
-                                                                )),
-                                                            Padding(
-                                                                padding:
-                                                                    const EdgeInsetsDirectional
-                                                                            .fromSTEB(0,
-                                                                        8, 0, 0),
-                                                                child: Text(
-                                                                    '${_averagePercentage.toStringAsFixed(2)}%',
-                                                                    style: const TextStyle(
-                                                                        fontFamily:
-                                                                            'Roboto',
-                                                                        color: Colors
-                                                                            .white,
-                                                                        fontSize:
-                                                                            36,
-                                                                        fontWeight:
-                                                                            FontWeight.w600))),
-                                                          ])),
-                                                      WaveProgress(
-                                                          140.0,
-                                                          Colors.green,
-                                                          Colors.greenAccent,
-                                                          _averagePercentage)
-                                                    ])))),
-                                    // Container(
-                                    //   margin: EdgeInsets.only(
-                                    //       top: 20.0, bottom: 20.0),
-                                    //   child: Slider(
-                                    //       max: 100.0,
-                                    //       min: 0.0,
-                                    //       value: _averagePercentage ,
-                                    //       onChanged: (value) {
-                                    //         setState(() => _averagePercentage  = value);
-                                    //       }),
-                                    // ),
+                                    Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          CustomCard(
+                                              backColor: Colors.green,
+                                              text: 'Média mensal',
+                                              sub_text: 'Produção energetica',
+                                              body_text:
+                                                  '${_averageProduction.toStringAsFixed(2)} MWh'),
+                                          const SizedBox(height: 10.0),
+                                          CustomCard(
+                                              backColor: Colors.red,
+                                              text: 'Média mensal',
+                                              sub_text: 'Radiação Global',
+                                              body_text:
+                                                  '${_averageGhi.toStringAsFixed(2)} w/m²'),
+                                          const SizedBox(height: 10.0),
+                                          CustomCard(
+                                              backColor: const Color.fromARGB(
+                                                  255, 231, 103, 29),
+                                              text: 'Média mensal',
+                                              sub_text: 'Temperatura',
+                                              body_text:
+                                                  '${_averageTemp.toStringAsFixed(2)} C°'),
+                                        ])
                                   ],
                                 ),
                               )),
                         ),
                       ),
                     ]))));
-  }
-}
-
-class ChartData {
-  final String year;
-  final String month;
-  final int value;
-
-  ChartData({required this.year, required this.month, required this.value});
-
-  factory ChartData.fromJson(Map<String, dynamic> json) {
-    return ChartData(
-      year: json['year'],
-      month: json['month'],
-      value: json['value'],
-    );
   }
 }
