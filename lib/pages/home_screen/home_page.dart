@@ -2,11 +2,13 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+// import 'package:wave_progress_widget/wave_progress.dart';
 import 'package:flutter/material.dart';
 
+import '../../model/chart.dart';
+import '../../widgets/custom_avatar.dart';
 import '../../widgets/custom_card.dart';
 import '../login_page.dart';
-import '../../model/chart.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, User? user});
@@ -16,8 +18,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  User? user = FirebaseAuth.instance.currentUser;
   String profileImage = "assets/images/user_avatar.png";
-
   List<charts.Series<ChartData, String>> _seriesList = [];
   double _averageProduction = 0;
   double _averageGhi = 0;
@@ -27,11 +29,11 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _loadDataFromJson();
-    (user) => print(user);
+    (user) => print(user['email']);
   }
 
   void _loadDataFromJson() {
-    String jsonData = '''
+    String jsonString = '''
       [
         {"year":2008,"month":"Jan","ghi":460.3776273734,"temp":33.0949356579,"producao":298324.7025379357},
         {"year":2008,"month":"Fev","ghi":463.0958054894,"temp":13.203870242,"producao":300086.0819571361},
@@ -48,7 +50,7 @@ class _HomePageState extends State<HomePage> {
       ]
     ''';
 
-    List<dynamic> data = jsonDecode(jsonData);
+    List<dynamic> data = jsonDecode(jsonString); // jsonData
     List<ChartData> chartData =
         List<ChartData>.from(data.map((item) => ChartData.fromJson(item)));
 
@@ -61,6 +63,8 @@ class _HomePageState extends State<HomePage> {
       totalTemp += data.temp;
       totalGhi += data.ghi;
     });
+
+    print(totalTemp);
 
     double averageProduction = (totalProduction / chartData.length) / 1000;
     double averageGhi = (totalGhi / chartData.length);
@@ -99,10 +103,10 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      CircleAvatar(
-                        radius: 24,
-                        backgroundImage: AssetImage(profileImage),
-                      ),
+                      CustomAvatar(user: user)
+                      // CircleAvatar(
+                      //     radius: 24,
+                      //     backgroundImage: NetworkImage(user!.photoURL!)),
                     ]),
               ),
               actions: <Widget>[

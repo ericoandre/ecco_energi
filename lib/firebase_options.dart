@@ -70,8 +70,10 @@ class DefaultFirebaseOptions {
     projectId: 'myappufrpe-ae955',
     databaseURL: 'https://myappufrpe-ae955-default-rtdb.firebaseio.com',
     storageBucket: 'myappufrpe-ae955.appspot.com',
-    androidClientId: '1061561441224-qe4hg2f4rj7uufk6b76lsq24g2gveos0.apps.googleusercontent.com',
-    iosClientId: '1061561441224-pibgsrdhmhbke5tdfgq7ftn006omkr7m.apps.googleusercontent.com',
+    androidClientId:
+        '1061561441224-qe4hg2f4rj7uufk6b76lsq24g2gveos0.apps.googleusercontent.com',
+    iosClientId:
+        '1061561441224-pibgsrdhmhbke5tdfgq7ftn006omkr7m.apps.googleusercontent.com',
     iosBundleId: 'com.example.eccoEnergi',
   );
 
@@ -82,8 +84,10 @@ class DefaultFirebaseOptions {
     projectId: 'myappufrpe-ae955',
     databaseURL: 'https://myappufrpe-ae955-default-rtdb.firebaseio.com',
     storageBucket: 'myappufrpe-ae955.appspot.com',
-    androidClientId: '1061561441224-qe4hg2f4rj7uufk6b76lsq24g2gveos0.apps.googleusercontent.com',
-    iosClientId: '1061561441224-pibgsrdhmhbke5tdfgq7ftn006omkr7m.apps.googleusercontent.com',
+    androidClientId:
+        '1061561441224-qe4hg2f4rj7uufk6b76lsq24g2gveos0.apps.googleusercontent.com',
+    iosClientId:
+        '1061561441224-pibgsrdhmhbke5tdfgq7ftn006omkr7m.apps.googleusercontent.com',
     iosBundleId: 'com.example.eccoEnergi',
   );
 }

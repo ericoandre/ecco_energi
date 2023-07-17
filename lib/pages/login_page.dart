@@ -19,8 +19,8 @@ class _LoginPageState extends State<LoginPage> {
 
   GoogleAuthProvider authProvider = GoogleAuthProvider();
 
-  String? name;
-  String? mageUrl;
+  // String? name;
+  // String? mageUrl;
   User? user;
 
   // wrong email message popup
@@ -150,10 +150,8 @@ class _LoginPageState extends State<LoginPage> {
                                   email: _emailController.text,
                                   password: _passwordController.text,
                                 );
-                                print("email: " + _emailController.text);
-                                print("password: " + _passwordController.text);
+                                print(_passwordController.text);
                                 Navigator.pop(context);
-
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -211,13 +209,11 @@ class _LoginPageState extends State<LoginPage> {
                         height: 50,
                         child: CustomButton(
                           onPressed: () async {
-                            User? user = await signInWithGoogle();
-
+                            user = await signInWithGoogle();
+                            print(user);
                             Navigator.of(context).pushReplacement(
                               MaterialPageRoute(
-                                builder: (context) => HomePage(
-                                  user: user,
-                                ),
+                                builder: (context) => const HomePage(),
                               ),
                             );
                           },
